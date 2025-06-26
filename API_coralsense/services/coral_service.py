@@ -1,26 +1,32 @@
 import json
 import os
 
+
 CAMINHO_CORAL_JSON = os.path.join(os.path.dirname(__file__), "..", "dados", "corais.json")
 
 
-def carregar_corais_json():
+def inicializar_arquivo():
+    os.makedirs(os.path.dirname(CAMINHO_CORAL_JSON), exist_ok=True)
+    if not os.path.exists(CAMINHO_CORAL_JSON):
+        with open(CAMINHO_CORAL_JSON, "w", encoding="utf-8") as f:
+            json.dump([], f)
 
+def carregar_corais_json():
+    inicializar_arquivo()
     try:
         with open(CAMINHO_CORAL_JSON, "r", encoding="utf-8") as f:
             return json.load(f)
-    except FileNotFoundError:
-        return []
+        
     except json.JSONDecodeError:
         return []
 
 def salvar_corais_json(lista_corais):
- 
+
     with open(CAMINHO_CORAL_JSON, "w", encoding="utf-8") as f:
         json.dump(lista_corais, f, indent=4, ensure_ascii=False)
 
 def adicionar_coral_json(coral):
- 
+
     corais = carregar_corais_json()
     coral["id"] = len(corais) + 1
     corais.append(coral)
@@ -28,11 +34,11 @@ def adicionar_coral_json(coral):
     return coral
 
 def listar_corais_json():
-    
+
     return carregar_corais_json()
 
 def buscar_coral_por_id_json(id):
- 
+
     corais = carregar_corais_json()
     for coral in corais:
         if coral["id"] == id:
@@ -40,7 +46,7 @@ def buscar_coral_por_id_json(id):
     return None
 
 def deletar_coral_por_id_json(id):
-
+    
     corais = carregar_corais_json()
     coral_encontrado = None
     nova_lista = []
@@ -55,4 +61,20 @@ def deletar_coral_por_id_json(id):
         salvar_corais_json(nova_lista)
         return True  
     else:
-        return False 
+        return False
+
+def atualizar_coral_por_id_json(id, novos_dados):
+    corais = carregar_corais_json()
+    coral_atualizado = None
+
+    for coral in corais:
+        if coral["id"] == id:
+            coral.update(novos_dados)
+            coral_atualizado = coral
+            break
+
+    if coral_atualizado:
+        salvar_corais_json(corais)
+        return coral_atualizado
+    else:
+        return None
