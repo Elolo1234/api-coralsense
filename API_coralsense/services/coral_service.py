@@ -1,23 +1,57 @@
-from models.coral import Coral
+import json
+import os
 
-def listar_corais():
-    corais = Coral.query.all()
-    return [c.to_dict() for c in corais]
+CAMINHO_CORAL_JSON = "dados/corais.json"
 
-def criar_coral(dados):
-    novo = Coral(**dados)
-    db_session.add(novo)
-    db_session.commit()
-    return novo.to_dict()
+def carregar_corais_json():
 
-def atualizar_coral(especie, dados):
-    coral = Coral.query.get_or_404(especie)
-    for chave, valor in dados.items():
-        setattr(coral, chave, valor)
-    db_session.commit()
-    return coral.to_dict()
+    try:
+        with open(CAMINHO_CORAL_JSON, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return []
+    except json.JSONDecodeError:
+        return []
 
-def deletar_coral(especie):
-    coral = Coral.query.get_or_404(especie)
-    db_session.delete(coral)
-    db_session.commit()
+def salvar_corais_json(lista_corais):
+ 
+    with open(CAMINHO_CORAL_JSON, "w", encoding="utf-8") as f:
+        json.dump(lista_corais, f, indent=4, ensure_ascii=False)
+
+def adicionar_coral_json(coral):
+ 
+    corais = carregar_corais_json()
+    coral["id"] = len(corais) + 1
+    corais.append(coral)
+    salvar_corais_json(corais)
+    return coral
+
+def listar_corais_json():
+    
+    return carregar_corais_json()
+
+def buscar_coral_por_id_json(id):
+ 
+    corais = carregar_corais_json()
+    for coral in corais:
+        if coral["id"] == id:
+            return coral
+    return None
+
+def deletar_coral_por_id_json(id):
+
+    corais = carregar_corais_json()
+    coral_encontrado = None
+    nova_lista = []
+
+    for coral in corais:
+        if coral["id"] == id:
+            coral_encontrado = coral
+        else:
+            nova_lista.append(coral)
+
+    if coral_encontrado:
+        salvar_corais_json(nova_lista)
+        return True  
+    else:
+        return False 
