@@ -1,23 +1,60 @@
-from models.pesquisador import Pesquisador
+import json
+import os
 
-def listar_pesquisadores():
-    pesquisadores = Pesquisador.query.all()
-    return [p.to_dict() for p in pesquisadores]
+CAMINHO_PESQUISADOR_JSON = "dados/pesquisadores.json"
 
-def criar_pesquisador(dados):
-    novo = Pesquisador(**dados)
-    db_session.add(novo)
-    db_session.commit()
-    return novo.to_dict()
 
-def atualizar_pesquisador(nome, dados):
-    pesquisador = Pesquisador.query.get_or_404(nome)
-    for chave, valor in dados.items():
-        setattr(pesquisador, chave, valor)
-    db_session.commit()
-    return pesquisador.to_dict()
 
-def deletar_pesquisador(nome):
-    pesquisador = Pesquisador.query.get_or_404(nome)
-    db_session.delete(pesquisador)
-    db_session.commit()
+
+def carregar_pesquisadores_json():
+
+    try:
+        with open(CAMINHO_PESQUISADOR_JSON, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return []
+    except json.JSONDecodeError:
+        return []
+
+def salvar_pesquisadores_json(lista_pesquisadores):
+
+    with open(CAMINHO_PESQUISADOR_JSON, "w", encoding="utf-8") as f:
+        json.dump(lista_pesquisadores, f, indent=4, ensure_ascii=False)
+
+def adicionar_pesquisador_json(pesquisador):
+    
+    pesquisadores = carregar_pesquisadores_json()
+    pesquisador["id"] = len(pesquisadores) + 1
+    pesquisadores.append(pesquisador)
+    salvar_pesquisadores_json(pesquisadores)
+    return pesquisador
+
+def listar_pesquisadores_json():
+   
+    return carregar_pesquisadores_json()
+
+def buscar_pesquisador_por_id_json(id):
+    
+    for p in carregar_pesquisadores_json():
+        if p["id"] == id:
+            return p
+    return None
+
+def atualizar_pesquisador_json(id, dados_atualizados):
+   
+    pesquisadores = carregar_pesquisadores_json()
+    for i, p in enumerate(pesquisadores):
+        if p["id"] == id:
+            pesquisadores[i].update(dados_atualizados)
+            salvar_pesquisadores_json(pesquisadores)
+            return pesquisadores[i]
+    return None
+
+def deletar_pesquisador_por_id_json(id):
+   
+    pesquisadores = carregar_pesquisadores_json()
+    nova_lista = [p for p in pesquisadores if p["id"] != id]
+    if len(nova_lista) < len(pesquisadores):
+        salvar_pesquisadores_json(nova_lista)
+        return True
+    return False
