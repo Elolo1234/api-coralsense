@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from services.coral_service import *
 
+
 coral_bp = Blueprint("corais", __name__)
 
 @coral_bp.route("/corais", methods=["GET"])
