@@ -1,7 +1,8 @@
 import json
 import os
 
-CAMINHO_CORAL_JSON = "dados/corais.json"
+CAMINHO_CORAL_JSON = os.path.join(os.path.dirname(__file__), "..", "dados", "corais.json")
+
 
 def carregar_corais_json():
 

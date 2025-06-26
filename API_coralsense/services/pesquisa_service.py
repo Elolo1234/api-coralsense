@@ -2,7 +2,8 @@ import json
 import os
 
 
-CAMINHO_PESQUISA_JSON = "dados/pesquisas.json"
+CAMINHO_PESQUISA_JSON = os.path.join(os.path.dirname(__file__), '..', 'dados', 'pesquisas.json')
+
 
 
 

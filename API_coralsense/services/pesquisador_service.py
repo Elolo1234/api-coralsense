@@ -1,7 +1,7 @@
 import json
 import os
 
-CAMINHO_PESQUISADOR_JSON = "dados/pesquisadores.json"
+CAMINHO_PESQUISADOR_JSON = os.path.join(os.path.dirname(__file__), '..', 'dados', 'pesquisadores.json')
 
 def carregar_pesquisadores_json():
 
