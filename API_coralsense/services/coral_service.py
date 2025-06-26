@@ -1,6 +1,5 @@
 from models.coral import Coral
 
-
 def listar_corais():
     corais = Coral.query.all()
     return [c.to_dict() for c in corais]

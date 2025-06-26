@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from services.corais_services import *
+from services.coral_service import *
 
 coral_bp = Blueprint("corais", __name__)
 
