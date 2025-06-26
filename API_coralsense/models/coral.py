@@ -1,5 +1,6 @@
 class Coral:
-    def __init__(self, especie, nome_popular, extincao, indice_temperatura, indice_poluicao):
+    def __init__(id, self, especie, nome_popular, extincao, indice_temperatura, indice_poluicao):
+        self.id = id
         self.especie = especie
         self.nome_popular = nome_popular
         self.extincao = extincao
@@ -8,6 +9,7 @@ class Coral:
 
     def to_dict(self):
         return{
+            "id": self.id,
             "especie" : self.especie,
             "nome_popular" : self.nome_popular,
             "extincao" : self.extincao,

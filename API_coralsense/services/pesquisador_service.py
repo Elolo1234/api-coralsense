@@ -3,9 +3,6 @@ import os
 
 CAMINHO_PESQUISADOR_JSON = "dados/pesquisadores.json"
 
-
-
-
 def carregar_pesquisadores_json():
 
     try:

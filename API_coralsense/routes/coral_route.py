@@ -5,22 +5,31 @@ coral_bp = Blueprint("corais", __name__)
 
 @coral_bp.route("/corais", methods=["GET"])
 def listar():
-    lista = listar_corais()
-    return jsonify(lista), 200
+    return jsonify(listar_corais_json()), 200
 
 @coral_bp.route("/corais", methods=["POST"])
 def criar():
     dados = request.json
-    novo_coral = criar_coral(dados)
-    return jsonify(novo_coral), 201
+    novo = adicionar_coral_json(dados)
+    return jsonify(novo), 201
 
-@coral_bp.route("/corais/<string:especie>", methods=["PUT"])
-def atualizar(especie):
+@coral_bp.route("/corais/<int:id>", methods=["PUT"])
+def atualizar(id):
     dados = request.json
-    coral_atualizado = atualizar_coral(especie, dados)
-    return jsonify(coral_atualizado), 200
+    coral = buscar_coral_por_id_json(id)
+    if coral:
+        coral.update(dados)
+        corais = listar_corais_json()
+        for i in range(len(corais)):
+            if corais[i]["id"] == id:
+                corais[i] = coral
+        from services.coral_services import salvar_corais_json
+        salvar_corais_json(corais)
+        return jsonify(coral), 200
+    return jsonify({"erro": "Coral não encontrado"}), 404
 
-@coral_bp.route("/corais/<string:especie>", methods=["DELETE"])
-def deletar(especie):
-    deletar_coral(especie)
-    return jsonify({"mensagem": "Coral deletado com sucesso!"}), 200
+@coral_bp.route("/corais/<int:id>", methods=["DELETE"])
+def deletar(id):
+    if deletar_coral_por_id_json(id):
+        return jsonify({"mensagem": "Coral deletado com sucesso!"}), 200
+    return jsonify({"erro": "Coral não encontrado"}), 404
